@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ملف المريض | نظام العيادة</title>
+    <link rel="stylesheet" href="../../assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../assets/css/main.css">
+    <link rel="stylesheet" href="../../assets/css/doctor.css">
+  </head>
+  <body>
+    <div class="app-layout">
+      <aside class="sidebar">
+        <div class="sidebar-brand"><span class="brand-mark">ط</span><span>نظام العيادة</span></div>
+        <nav class="nav-menu">
+          <a data-page="doctor-dashboard" href="dashboard.html">لوحة الطبيب</a>
+          <a data-page="doctor-appointments" href="appointments.html">المواعيد</a>
+          <a data-page="doctor-patient" href="patient-details.html">ملف مريض</a>
+          <a data-page="doctor-consultations" href="consultations.html">الاستشارات</a>
+        </nav>
+      </aside>
+      <main class="main">
+        <header class="topbar">
+          <div class="page-title"><h1 id="patientTitle">ملف المريض</h1><p id="patientSubtitle"></p></div>
+          <div class="user-chip"><span class="avatar" data-avatar></span><span data-user-name></span><button class="btn btn-outline-secondary" data-logout type="button">تسجيل الخروج</button></div>
+        </header>
+
+        <div id="patientMessage" class="alert alert-success d-none mb-3"></div>
+
+        <section class="patient-grid">
+          <aside class="doctor-workspace">
+            <section class="section-card">
+              <div class="section-head"><h2>معلومات المريض</h2></div>
+              <ul id="patientInfo" class="info-list"></ul>
+            </section>
+            <section class="section-card">
+              <div class="section-head"><h2>معلومات الموعد الحالي</h2></div>
+              <ul id="appointmentInfo" class="info-list"></ul>
+            </section>
+          </aside>
+
+          <div class="doctor-workspace">
+            <section class="section-card">
+              <div class="section-head"><h2>التشخيص</h2></div>
+              <textarea id="diagnosisText" class="form-control" placeholder="اكتب التشخيص الحالي"></textarea>
+              <div class="actions mt-3">
+                <button id="saveDiagnosisBtn" class="btn btn-primary" type="button">حفظ التشخيص</button>
+                <button id="completeAppointmentBtn" class="btn btn-success" type="button">إنهاء الموعد</button>
+              </div>
+            </section>
+
+            <section class="row">
+              <div class="col-md-6 mb-3">
+                <section class="section-card">
+                  <div class="section-head"><h2>طلب تحليل</h2></div>
+                  <label class="form-label" for="labType">نوع التحليل</label>
+                  <select id="labType" class="form-select mb-3">
+                    <option>CBC</option>
+                    <option>Ferritin</option>
+                    <option>HbA1c</option>
+                    <option>Vitamin D</option>
+                    <option>Iron</option>
+                    <option>Liver Function</option>
+                    <option>Kidney Function</option>
+                  </select>
+                  <label class="form-label" for="labNotes">ملاحظات</label>
+                  <textarea id="labNotes" class="form-control"></textarea>
+                  <button id="sendLabBtn" class="btn btn-primary mt-3" type="button">إرسال طلب تحليل</button>
+                </section>
+              </div>
+              <div class="col-md-6 mb-3">
+                <section class="section-card">
+                  <div class="section-head"><h2>طلب أشعة</h2></div>
+                  <label class="form-label" for="radiologyType">نوع الأشعة</label>
+                  <select id="radiologyType" class="form-select mb-3">
+                    <option>X-Ray</option>
+                    <option>CT Scan</option>
+                    <option>MRI</option>
+                    <option>Ultrasound</option>
+                  </select>
+                  <label class="form-label" for="radiologyNotes">ملاحظات</label>
+                  <textarea id="radiologyNotes" class="form-control"></textarea>
+                  <button id="sendRadiologyBtn" class="btn btn-primary mt-3" type="button">إرسال طلب أشعة</button>
+                </section>
+              </div>
+            </section>
+
+            <section class="section-card">
+              <div class="section-head"><h2>الوصفة الطبية</h2></div>
+              <div class="prescription-row">
+                <div>
+                  <label class="form-label" for="medication">اسم الدواء</label>
+                  <input id="medication" class="form-control" placeholder="Paracetamol">
+                </div>
+                <div>
+                  <label class="form-label" for="dosage">الجرعة</label>
+                  <input id="dosage" class="form-control" placeholder="500mg">
+                </div>
+                <div>
+                  <label class="form-label" for="instruction">التعليمات</label>
+                  <input id="instruction" class="form-control" placeholder="مرتين يوميًا بعد الطعام">
+                </div>
+                <button id="addPrescriptionBtn" class="btn btn-primary" type="button">إضافة</button>
+              </div>
+              <div class="table-wrap mt-3">
+                <table class="table">
+                  <thead><tr><th>الدواء</th><th>الجرعة</th><th>التعليمات</th><th>العملية</th></tr></thead>
+                  <tbody id="prescriptionDraft"></tbody>
+                </table>
+              </div>
+              <button id="savePrescriptionsBtn" class="btn btn-success mt-3" type="button">حفظ الوصفة</button>
+            </section>
+
+            <section class="section-card">
+              <div class="section-head"><h2>السجل الطبي للمريض</h2></div>
+              <div class="nav-tabs" role="tablist">
+                <button class="nav-link active" data-tab="labsTab" type="button">التحاليل السابقة</button>
+                <button class="nav-link" data-tab="radiologyTab" type="button">الأشعة السابقة</button>
+                <button class="nav-link" data-tab="prescriptionsTab" type="button">الوصفات السابقة</button>
+                <button class="nav-link" data-tab="appointmentsTab" type="button">المواعيد السابقة</button>
+              </div>
+              <div id="labsTab" class="tab-panel active"></div>
+              <div id="radiologyTab" class="tab-panel"></div>
+              <div id="prescriptionsTab" class="tab-panel"></div>
+              <div id="appointmentsTab" class="tab-panel"></div>
+            </section>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="../../assets/js/config.js"></script>
+    <script src="../../assets/js/utils.js"></script>
+    <script src="../../assets/js/auth.js"></script>
+    <script src="../../assets/js/guard.js"></script>
+    <script src="../../assets/js/doctor/patient-details.js"></script>
+  </body>
+</html>

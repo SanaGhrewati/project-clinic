@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>الاستشارات | نظام العيادة</title>
+    <link rel="stylesheet" href="../../assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../assets/css/main.css">
+    <link rel="stylesheet" href="../../assets/css/doctor.css">
+  </head>
+  <body>
+    <div class="app-layout">
+      <aside class="sidebar">
+        <div class="sidebar-brand"><span class="brand-mark">ط</span><span>نظام العيادة</span></div>
+        <nav class="nav-menu">
+          <a data-page="doctor-dashboard" href="dashboard.html">لوحة الطبيب</a>
+          <a data-page="doctor-appointments" href="appointments.html">المواعيد</a>
+          <a data-page="doctor-patient" href="patient-details.html">ملف مريض</a>
+          <a data-page="doctor-consultations" href="consultations.html">الاستشارات</a>
+        </nav>
+      </aside>
+      <main class="main">
+        <header class="topbar">
+          <div class="page-title"><h1>الاستشارات</h1><p>استشارات المرضى القادمة من التطبيق</p></div>
+          <div class="user-chip"><span class="avatar" data-avatar></span><span data-user-name></span><button class="btn btn-outline-secondary" data-logout type="button">تسجيل الخروج</button></div>
+        </header>
+
+        <section class="toolbar three">
+          <select id="consultationStatus" class="form-select">
+            <option value="All">كل الحالات</option>
+            <option value="Open">Open</option>
+            <option value="Answered">Answered</option>
+            <option value="Closed">Closed</option>
+          </select>
+          <span></span>
+          <input id="consultationSearch" class="form-control" type="search" placeholder="بحث باسم المريض">
+        </section>
+
+        <section class="row">
+          <div class="col-lg-8 mb-3">
+            <section class="table-wrap">
+              <table class="table">
+                <thead><tr><th>اسم المريض</th><th>نص الاستشارة</th><th>الحالة</th><th>تاريخ الإرسال</th><th>العملية</th></tr></thead>
+                <tbody id="consultationsTable"></tbody>
+              </table>
+            </section>
+          </div>
+          <div class="col-lg-4 mb-3">
+            <section class="section-card">
+              <div class="section-head"><h2>تفاصيل الاستشارة</h2></div>
+              <div id="consultationDetails" class="mb-3 text-muted">اختاري استشارة لعرض تفاصيلها</div>
+              <label class="form-label" for="replyText">الرد</label>
+              <textarea id="replyText" class="form-control" placeholder="اكتب الرد هنا"></textarea>
+              <button id="sendReplyBtn" class="btn btn-primary mt-3" type="button">إرسال الرد</button>
+            </section>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="../../assets/js/config.js"></script>
+    <script src="../../assets/js/utils.js"></script>
+    <script src="../../assets/js/auth.js"></script>
+    <script src="../../assets/js/guard.js"></script>
+    <script src="../../assets/js/doctor/consultations.js"></script>
+  </body>
+</html>

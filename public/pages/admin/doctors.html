@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>إدارة الأطباء | نظام العيادة</title>
+    <link rel="stylesheet" href="../../assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../assets/css/main.css">
+    <link rel="stylesheet" href="../../assets/css/admin.css">
+  </head>
+  <body>
+    <div class="app-layout">
+      <aside class="sidebar">
+        <div class="sidebar-brand"><span class="brand-mark">ط</span><span>نظام العيادة</span></div>
+        <nav class="nav-menu">
+          <a data-page="admin-dashboard" href="dashboard.html">لوحة الإدارة</a>
+          <a data-page="admin-doctors" href="doctors.html">إدارة الأطباء</a>
+        </nav>
+      </aside>
+      <main class="main">
+        <header class="topbar">
+          <div class="page-title">
+            <h1>إدارة الأطباء</h1>
+            <p>إضافة وتعديل وحذف مستخدمي الموقع</p>
+          </div>
+          <div class="user-chip">
+            <span class="avatar" data-avatar></span>
+            <span data-user-name></span>
+            <button class="btn btn-outline-secondary" data-logout type="button">تسجيل الخروج</button>
+          </div>
+        </header>
+
+        <section class="toolbar">
+          <input id="doctorSearch" class="form-control" type="search" placeholder="بحث بالاسم أو البريد أو القسم">
+          <select id="doctorTypeFilter" class="form-select">
+            <option value="All">All</option>
+            <option value="General">General</option>
+            <option value="Lab">Lab</option>
+            <option value="Radiology">Radiology</option>
+          </select>
+          <span></span>
+          <button id="addDoctorBtn" class="btn btn-primary" type="button">إضافة طبيب</button>
+        </section>
+
+        <section class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>الاسم</th>
+                <th>البريد</th>
+                <th>الهاتف</th>
+                <th>القسم</th>
+                <th>النوع</th>
+                <th>العمليات</th>
+              </tr>
+            </thead>
+            <tbody id="doctorsTable"></tbody>
+          </table>
+        </section>
+      </main>
+    </div>
+
+    <div id="doctorModal" class="modal-backdrop">
+      <section class="modal-panel">
+        <div class="modal-head">
+          <h2 id="doctorModalTitle">إضافة طبيب</h2>
+          <button class="btn btn-outline-secondary" type="button" data-close-modal>إغلاق</button>
+        </div>
+        <form id="doctorForm">
+          <input type="hidden" name="id">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label" for="doctorName">الاسم</label>
+              <input id="doctorName" class="form-control" name="name" required>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label" for="doctorEmail">البريد</label>
+              <input id="doctorEmail" class="form-control" name="email" type="email" required>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label" for="doctorPassword">كلمة المرور</label>
+              <input id="doctorPassword" class="form-control" name="password" type="password" placeholder="اختياري عند التعديل">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label" for="doctorPhone">الهاتف</label>
+              <input id="doctorPhone" class="form-control" name="phone" required>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label" for="doctorDepartment">القسم</label>
+              <input id="doctorDepartment" class="form-control" name="department" required>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label" for="doctorType">النوع</label>
+              <select id="doctorType" class="form-select" name="type">
+                <option value="General">General</option>
+                <option value="Lab">Lab</option>
+                <option value="Radiology">Radiology</option>
+              </select>
+            </div>
+          </div>
+          <div class="actions">
+            <button class="btn btn-primary" type="submit">حفظ</button>
+            <button class="btn btn-outline-secondary" type="button" data-close-modal>إلغاء</button>
+          </div>
+        </form>
+      </section>
+    </div>
+
+    <script src="../../assets/js/config.js"></script>
+    <script src="../../assets/js/utils.js"></script>
+    <script src="../../assets/js/auth.js"></script>
+    <script src="../../assets/js/guard.js"></script>
+    <script src="../../assets/js/admin/doctors.js"></script>
+  </body>
+</html>

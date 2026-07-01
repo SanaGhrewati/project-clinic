@@ -1,0 +1,153 @@
+.patient-grid {
+  display: grid;
+  grid-template-columns: minmax(300px, 340px) minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.doctor-workspace {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+
+.patient-grid > * {
+  min-width: 0;
+}
+
+.prescription-row {
+  display: grid;
+  grid-template-columns: 1fr 150px 1.2fr auto;
+  gap: 10px;
+  align-items: end;
+}
+
+.patient-grid .section-card {
+  min-width: 0;
+}
+
+.patient-grid textarea.form-control {
+  min-height: clamp(110px, 18vh, 180px);
+}
+
+.patient-grid .row {
+  margin-right: 0;
+  margin-left: 0;
+}
+
+.patient-grid .col-md-6 {
+  display: flex;
+}
+
+.patient-grid .col-md-6 > .section-card {
+  width: 100%;
+}
+
+.doctor-workspace .section-card:first-child {
+  border-top: 3px solid #176b87;
+}
+
+.nav-tabs {
+  background: #f8fbfd;
+  border-radius: 8px;
+  padding: 6px;
+  border-bottom: 0;
+}
+
+.nav-tabs .nav-link {
+  border-radius: 8px;
+  color: #536274;
+  font-weight: 700;
+}
+
+.tab-panel .table {
+  min-width: 560px;
+}
+
+#prescriptionDraft {
+  min-height: 42px;
+}
+
+@media (max-width: 1180px) {
+  .patient-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .prescription-row {
+    grid-template-columns: minmax(0, 1fr) 130px minmax(0, 1fr) auto;
+  }
+
+  .patient-grid > aside.doctor-workspace {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 980px) {
+  .patient-grid,
+  .prescription-row {
+    grid-template-columns: 1fr;
+  }
+
+  .doctor-workspace {
+    gap: 14px;
+  }
+
+  .patient-grid > aside.doctor-workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .patient-grid .table {
+    min-width: 620px;
+  }
+}
+
+@media (max-width: 720px) {
+  .patient-grid .section-card {
+    padding: 14px;
+  }
+
+  .patient-grid .info-list li {
+    display: grid;
+    gap: 4px;
+  }
+
+  .patient-grid .info-list strong {
+    overflow-wrap: anywhere;
+  }
+
+  .patient-grid textarea.form-control {
+    min-height: 120px;
+  }
+
+  .nav-tabs {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .nav-tabs .nav-link {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .nav-tabs {
+    grid-template-columns: 1fr;
+  }
+
+  .patient-grid .table,
+  .tab-panel .table {
+    min-width: 520px;
+  }
+
+  .patient-grid .actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .patient-grid .actions .btn,
+  #sendLabBtn,
+  #sendRadiologyBtn,
+  #savePrescriptionsBtn {
+    width: 100%;
+  }
+}

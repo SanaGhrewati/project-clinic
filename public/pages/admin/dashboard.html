@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>لوحة الإدارة | نظام العيادة</title>
+    <link rel="stylesheet" href="../../assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../assets/css/main.css">
+    <link rel="stylesheet" href="../../assets/css/admin.css">
+  </head>
+  <body>
+    <div class="app-layout">
+      <aside class="sidebar">
+        <div class="sidebar-brand"><span class="brand-mark">ط</span><span>نظام العيادة</span></div>
+        <nav class="nav-menu">
+          <a data-page="admin-dashboard" href="dashboard.html">لوحة الإدارة</a>
+          <a data-page="admin-doctors" href="doctors.html">إدارة الأطباء</a>
+        </nav>
+      </aside>
+      <main class="main">
+        <header class="topbar">
+          <div class="page-title">
+            <h1>لوحة الإدارة</h1>
+            <p>إحصائيات النظام العامة</p>
+          </div>
+          <div class="user-chip">
+            <span class="avatar" data-avatar></span>
+            <span data-user-name></span>
+            <button class="btn btn-outline-secondary" data-logout type="button">تسجيل الخروج</button>
+          </div>
+        </header>
+
+        <section class="row gap-3">
+          <div class="col-lg-3 col-md-4"><article class="stat-card admin-accent"><span>إجمالي الأطباء</span><strong data-stat="totalDoctors">0</strong></article></div>
+          <div class="col-lg-3 col-md-4"><article class="stat-card"><span>أطباء General</span><strong data-stat="generalDoctors">0</strong></article></div>
+          <div class="col-lg-3 col-md-4"><article class="stat-card"><span>مستخدمي Lab</span><strong data-stat="labUsers">0</strong></article></div>
+          <div class="col-lg-3 col-md-4"><article class="stat-card"><span>مستخدمي Radiology</span><strong data-stat="radiologyUsers">0</strong></article></div>
+          <div class="col-lg-3 col-md-4"><article class="stat-card"><span>إجمالي المرضى</span><strong data-stat="patients">0</strong></article></div>
+          <div class="col-lg-3 col-md-4"><article class="stat-card"><span>عدد المواعيد</span><strong data-stat="appointments">0</strong></article></div>
+          <div class="col-lg-3 col-md-4"><article class="stat-card"><span>الاستشارات المفتوحة</span><strong data-stat="openConsultations">0</strong></article></div>
+          <div class="col-lg-3 col-md-4"><article class="stat-card"><span>طلبات التحاليل المعلقة</span><strong data-stat="pendingLab">0</strong></article></div>
+          <div class="col-lg-3 col-md-4"><article class="stat-card"><span>طلبات الأشعة المعلقة</span><strong data-stat="pendingRadiology">0</strong></article></div>
+        </section>
+      </main>
+    </div>
+
+    <script src="../../assets/js/config.js"></script>
+    <script src="../../assets/js/utils.js"></script>
+    <script src="../../assets/js/auth.js"></script>
+    <script src="../../assets/js/guard.js"></script>
+    <script src="../../assets/js/admin/dashboard.js"></script>
+  </body>
+</html>

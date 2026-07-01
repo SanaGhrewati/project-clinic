@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>طلبات الفريق | نظام العيادة</title>
+    <link rel="stylesheet" href="../../assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../assets/css/main.css">
+    <link rel="stylesheet" href="../../assets/css/staff.css">
+  </head>
+  <body>
+    <div class="app-layout">
+      <aside class="sidebar">
+        <div class="sidebar-brand"><span class="brand-mark">ط</span><span>نظام العيادة</span></div>
+        <nav class="nav-menu">
+          <a data-page="staff-dashboard" href="dashboard.html">لوحة الطلبات</a>
+          <a data-page="staff-request" href="request-details.html">تفاصيل طلب</a>
+        </nav>
+      </aside>
+      <main class="main">
+        <header class="topbar">
+          <div class="page-title">
+            <h1 id="staffPageTitle">طلبات الفريق</h1>
+            <p><span data-user-role></span> - <span data-user-department></span></p>
+          </div>
+          <div class="user-chip">
+            <span class="avatar" data-avatar></span>
+            <span data-user-name></span>
+            <button class="btn btn-outline-secondary" data-logout type="button">تسجيل الخروج</button>
+          </div>
+        </header>
+
+        <section class="row gap-3 mb-4">
+          <div class="col-lg-3 col-md-6"><article class="stat-card"><span>Pending</span><strong data-stat="pending">0</strong></article></div>
+          <div class="col-lg-3 col-md-6"><article class="stat-card"><span>Completed</span><strong data-stat="completed">0</strong></article></div>
+          <div class="col-lg-3 col-md-6"><article class="stat-card"><span>إجمالي الطلبات</span><strong data-stat="total">0</strong></article></div>
+        </section>
+
+        <section class="toolbar three">
+          <select id="requestStatus" class="form-select">
+            <option value="All">كل الحالات</option>
+            <option value="Pending">Pending</option>
+            <option value="Completed">Completed</option>
+          </select>
+          <span></span>
+          <input id="requestSearch" class="form-control" type="search" placeholder="بحث باسم المريض">
+        </section>
+
+        <section class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>اسم المريض</th>
+                <th>الطبيب الطالب</th>
+                <th id="requestTypeHead">الطلب المطلوب</th>
+                <th>الحالة</th>
+                <th>التاريخ</th>
+                <th>العملية</th>
+              </tr>
+            </thead>
+            <tbody id="requestsTable"></tbody>
+          </table>
+        </section>
+      </main>
+    </div>
+
+    <script src="../../assets/js/config.js"></script>
+    <script src="../../assets/js/utils.js"></script>
+    <script src="../../assets/js/auth.js"></script>
+    <script src="../../assets/js/guard.js"></script>
+    <script src="../../assets/js/staff/dashboard.js"></script>
+  </body>
+</html>

@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>تفاصيل الطلب | نظام العيادة</title>
+    <link rel="stylesheet" href="../../assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../assets/css/main.css">
+    <link rel="stylesheet" href="../../assets/css/staff.css">
+  </head>
+  <body>
+    <div class="app-layout">
+      <aside class="sidebar">
+        <div class="sidebar-brand"><span class="brand-mark">ط</span><span>نظام العيادة</span></div>
+        <nav class="nav-menu">
+          <a data-page="staff-dashboard" href="dashboard.html">لوحة الطلبات</a>
+          <a data-page="staff-request" href="request-details.html">تفاصيل طلب</a>
+        </nav>
+      </aside>
+      <main class="main">
+        <header class="topbar">
+          <div class="page-title"><h1 id="requestTitle">تفاصيل الطلب</h1><p id="requestSubtitle"></p></div>
+          <div class="user-chip"><span class="avatar" data-avatar></span><span data-user-name></span><button class="btn btn-outline-secondary" data-logout type="button">تسجيل الخروج</button></div>
+        </header>
+
+        <div id="requestMessage" class="alert alert-success d-none mb-3"></div>
+
+        <section class="request-layout">
+          <aside class="section-card">
+            <div class="section-head"><h2>معلومات الطلب</h2></div>
+            <ul id="requestInfo" class="info-list"></ul>
+          </aside>
+
+          <section class="section-card">
+            <div class="section-head"><h2 id="resultHeading">إدخال النتيجة</h2></div>
+            <div class="request-summary mb-3">
+              <strong id="requestName"></strong>
+              <p id="requestNotes" class="text-muted mb-0"></p>
+            </div>
+            <label class="form-label" for="resultText" id="resultLabel">النتيجة</label>
+            <textarea id="resultText" class="form-control result-box"></textarea>
+            <label class="form-label mt-3" for="resultFile">رفع ملف أو تقرير</label>
+            <input id="resultFile" class="form-control" type="file" accept=".pdf,image/*">
+            <div class="actions mt-3">
+              <button id="saveResultBtn" class="btn btn-primary" type="button">حفظ النتيجة</button>
+              <a class="btn btn-outline-secondary" href="dashboard.html">العودة للطلبات</a>
+            </div>
+          </section>
+        </section>
+      </main>
+    </div>
+
+    <script src="../../assets/js/config.js"></script>
+    <script src="../../assets/js/utils.js"></script>
+    <script src="../../assets/js/auth.js"></script>
+    <script src="../../assets/js/guard.js"></script>
+    <script src="../../assets/js/staff/request-details.js"></script>
+  </body>
+</html>

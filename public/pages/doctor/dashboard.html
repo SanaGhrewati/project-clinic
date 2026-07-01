@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>لوحة الطبيب | نظام العيادة</title>
+    <link rel="stylesheet" href="../../assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../assets/css/main.css">
+    <link rel="stylesheet" href="../../assets/css/doctor.css">
+  </head>
+  <body>
+    <div class="app-layout">
+      <aside class="sidebar">
+        <div class="sidebar-brand"><span class="brand-mark">ط</span><span>نظام العيادة</span></div>
+        <nav class="nav-menu">
+          <a data-page="doctor-dashboard" href="dashboard.html">لوحة الطبيب</a>
+          <a data-page="doctor-appointments" href="appointments.html">المواعيد</a>
+          <a data-page="doctor-patient" href="patient-details.html">ملف مريض</a>
+          <a data-page="doctor-consultations" href="consultations.html">الاستشارات</a>
+        </nav>
+      </aside>
+      <main class="main">
+        <header class="topbar">
+          <div class="page-title">
+            <h1>لوحة الطبيب</h1>
+            <p><span data-user-department></span></p>
+          </div>
+          <div class="user-chip">
+            <span class="avatar" data-avatar></span>
+            <span data-user-name></span>
+            <button class="btn btn-outline-secondary" data-logout type="button">تسجيل الخروج</button>
+          </div>
+        </header>
+
+        <section class="row gap-3 mb-4">
+          <div class="col-lg-3 col-md-6"><article class="stat-card"><span>مواعيد اليوم</span><strong data-stat="todayAppointments">0</strong></article></div>
+          <div class="col-lg-3 col-md-6"><article class="stat-card"><span>استشارات جديدة</span><strong data-stat="newConsultations">0</strong></article></div>
+          <div class="col-lg-3 col-md-6"><article class="stat-card"><span>تحاليل معلقة لمرضاي</span><strong data-stat="pendingLab">0</strong></article></div>
+          <div class="col-lg-3 col-md-6"><article class="stat-card"><span>أشعة معلقة لمرضاي</span><strong data-stat="pendingRadiology">0</strong></article></div>
+        </section>
+
+        <section class="row">
+          <div class="col-lg-8 mb-3">
+            <section class="section-card">
+              <div class="section-head">
+                <h2>مواعيد اليوم</h2>
+                <a class="btn btn-outline-secondary" href="appointments.html">كل المواعيد</a>
+              </div>
+              <div class="table-wrap">
+                <table class="table">
+                  <thead><tr><th>المريض</th><th>الوقت</th><th>الحالة</th><th>العملية</th></tr></thead>
+                  <tbody id="todayAppointmentsTable"></tbody>
+                </table>
+              </div>
+            </section>
+          </div>
+          <div class="col-lg-4 mb-3">
+            <section class="section-card">
+              <div class="section-head">
+                <h2>آخر الاستشارات</h2>
+                <a class="btn btn-outline-secondary" href="consultations.html">فتح</a>
+              </div>
+              <div id="latestConsultations" class="list"></div>
+            </section>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="../../assets/js/config.js"></script>
+    <script src="../../assets/js/utils.js"></script>
+    <script src="../../assets/js/auth.js"></script>
+    <script src="../../assets/js/guard.js"></script>
+    <script src="../../assets/js/doctor/dashboard.js"></script>
+  </body>
+</html>
