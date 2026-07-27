@@ -13,6 +13,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+// Route::get('/', function () {
+//     return view('login');
+// });
+use Illuminate\Support\Facades\File;
+
 Route::get('/', function () {
-    return view('login');
+    return File::get(public_path('index.html'));
 });

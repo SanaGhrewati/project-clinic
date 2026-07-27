@@ -2,37 +2,60 @@ const doctorDashboardUser = requireRole("General");
 if (doctorDashboardUser) {
   fillSharedLayout("doctor-dashboard");
 
-  const appointments = getAppointments();
-  const todayAppointments = appointments.filter((appointment) => appointment.date === todayString());
-  const patientIds = appointments.map((appointment) => appointment.patientId);
-  const files = getMedicalFiles().filter((file) => patientIds.includes(file.patientId));
-  const consultations = getConsultations();
+  async function loadDashboard() {
+    try {
+      const response = await fetch(`${API_URL}/doctor/dashboard`, {
+        headers: {
+          "Authorization": `Bearer ${getToken()}`,
+          "Accept": "application/json"
+        }
+      });
 
-  document.querySelector('[data-stat="todayAppointments"]').textContent = todayAppointments.length;
-  document.querySelector('[data-stat="newConsultations"]').textContent = consultations.filter((item) => item.status === "Open").length;
-  document.querySelector('[data-stat="pendingLab"]').textContent = files.filter((file) => file.file_type === "Lab" && file.status === "Pending").length;
-  document.querySelector('[data-stat="pendingRadiology"]').textContent = files.filter((file) => file.file_type === "Radiology" && file.status === "Pending").length;
+      if (response.status === 401) {
+        logout();
+        return;
+      }
 
-  document.getElementById("todayAppointmentsTable").innerHTML = todayAppointments.map((appointment) => {
-    const patient = patientById(appointment.patientId);
-    return `
+      if (!response.ok) {
+        throw new Error("تعذر تحميل بيانات لوحة التحكم");
+      }
+
+      const data = await response.json();
+      renderStats(data.stats);
+      renderTodayAppointments(data.today_appointments);
+      renderLatestConsultations(data.latest_consultations);
+    } catch (error) {
+      showAlert("dashboardMessage", error.message || "حدث خطأ غير متوقع", "danger");
+    }
+  }
+
+  function renderStats(stats) {
+    document.querySelector('[data-stat="todayAppointments"]').textContent = stats.today_appointments;
+    document.querySelector('[data-stat="newConsultations"]').textContent = stats.new_consultations;
+    document.querySelector('[data-stat="pendingLab"]').textContent = stats.pending_lab;
+    document.querySelector('[data-stat="pendingRadiology"]').textContent = stats.pending_radiology;
+  }
+
+  function renderTodayAppointments(appointments) {
+    document.getElementById("todayAppointmentsTable").innerHTML = appointments.map((appointment) => `
       <tr>
-        <td>${patient.name}</td>
+        <td>${appointment.patient_name ?? "-"}</td>
         <td>${appointment.time}</td>
         <td>${badge(appointment.status)}</td>
-        <td><a class="btn btn-outline-secondary" href="patient-details.html?appointmentId=${appointment.id}&patientId=${patient.id}">فتح الملف</a></td>
+        <td><a class="btn btn-outline-secondary" href="patient-details.html?appointmentId=${appointment.id}&patientId=${appointment.patient_id}">فتح الملف</a></td>
       </tr>
-    `;
-  }).join("");
+    `).join("");
+  }
 
-  document.getElementById("latestConsultations").innerHTML = consultations.slice(0, 3).map((consultation) => {
-    const patient = patientById(consultation.patientId);
-    return `
+  function renderLatestConsultations(consultations) {
+    document.getElementById("latestConsultations").innerHTML = consultations.map((consultation) => `
       <article class="list-item">
-        <strong>${patient.name}</strong>
+        <strong>${consultation.patient_name ?? "-"}</strong>
         <p class="text-muted mb-2">${shortText(consultation.message, 70)}</p>
         ${badge(consultation.status)}
       </article>
-    `;
-  }).join("");
+    `).join("");
+  }
+
+  loadDashboard();
 }
