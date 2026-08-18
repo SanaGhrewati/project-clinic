@@ -29,7 +29,7 @@ return new class extends Migration
             'Lab',
             'Radiology'
         ]);
-
+        
         $table->string('file_url')
             ->nullable();
 

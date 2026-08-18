@@ -1,98 +1,227 @@
 const adminDoctorUser = requireRole("Admin");
+
 if (adminDoctorUser) {
-  fillSharedLayout("admin-doctors");
 
-  const table = document.getElementById("doctorsTable");
-  const search = document.getElementById("doctorSearch");
-  const filter = document.getElementById("doctorTypeFilter");
-  const modal = document.getElementById("doctorModal");
-  const form = document.getElementById("doctorForm");
-  const modalTitle = document.getElementById("doctorModalTitle");
-  let editingId = null;
+    fillSharedLayout("admin-doctors");
 
-  function openModal(doctor) {
-    editingId = doctor ? doctor.id : null;
-    modalTitle.textContent = doctor ? "تعديل طبيب" : "إضافة طبيب";
-    form.reset();
-    form.elements.id.value = doctor?.id || "";
-    form.elements.name.value = doctor?.name || "";
-    form.elements.email.value = doctor?.email || "";
-    form.elements.password.value = "";
-    form.elements.phone.value = doctor?.phone || "";
-    form.elements.department.value = doctor?.department || "";
-    form.elements.type.value = doctor?.type || "General";
-    modal.classList.add("show");
-  }
+    const table = document.getElementById("doctorsTable");
+    const search = document.getElementById("doctorSearch");
+    const filter = document.getElementById("doctorTypeFilter");
+    const modal = document.getElementById("doctorModal");
+    const form = document.getElementById("doctorForm");
+    const modalTitle = document.getElementById("doctorModalTitle");
 
-  function closeModal() {
-    modal.classList.remove("show");
-    form.reset();
-    editingId = null;
-  }
+    let doctors = [];
+    let editingId = null;
 
-  function renderDoctorsTable() {
-    const query = search.value.trim().toLowerCase();
-    const type = filter.value;
-    const doctors = getDoctors().filter((doctor) => {
-      const matchesQuery = [doctor.name, doctor.email, doctor.phone, doctor.department].join(" ").toLowerCase().includes(query);
-      const matchesType = type === "All" || doctor.type === type;
-      return matchesQuery && matchesType;
+    async function loadDoctors() {
+
+        const response = await fetch(API_URL + "/doctors", {
+            headers: {
+                "Authorization": "Bearer " + getToken(),
+                "Accept": "application/json"
+            }
+        });
+
+        doctors = await response.json();
+
+        renderDoctorsTable();
+
+    }
+
+    function openModal(doctor = null) {
+
+        editingId = doctor ? doctor.id : null;
+
+        modalTitle.textContent = doctor ? "تعديل طبيب" : "إضافة طبيب";
+
+        form.reset();
+
+        if (doctor) {
+
+            form.elements.id.value = doctor.id;
+            form.elements.name.value = doctor.user.name;
+            form.elements.email.value = doctor.user.email;
+            form.elements.phone.value = doctor.mobile;
+            form.elements.department.value = doctor.department_id;
+            form.elements.type.value = doctor.doctor_type;
+
+        }
+
+        modal.classList.add("show");
+
+    }
+
+    function closeModal() {
+
+        modal.classList.remove("show");
+
+        form.reset();
+
+        editingId = null;
+
+    }
+
+    function renderDoctorsTable() {
+
+        const query = search.value.toLowerCase();
+
+        const type = filter.value;
+
+        const filtered = doctors.filter((doctor) => {
+
+            const text = (
+                doctor.user.name +
+                doctor.user.email +
+                doctor.mobile
+            ).toLowerCase();
+
+            const okSearch = text.includes(query);
+
+            const okType = type === "All" || doctor.doctor_type === type;
+
+            return okSearch && okType;
+
+        });
+
+        table.innerHTML = filtered.map(doctor => 
+        `<tr>
+            <td>${doctor.user.name}</td>
+            <td>${doctor.user.email}</td>
+            <td>${doctor.mobile}</td>
+            <td>${doctor.department.name}</td>
+            <td>${doctor.doctor_type}</td>
+            <td>
+                <button
+                    class="btn btn-outline-secondary"
+                    data-edit="${doctor.id}">
+                    تعديل
+                </button>
+
+                <button
+                    class="btn btn-danger"
+                    data-delete="${doctor.id}">
+                    حذف
+                </button>
+            </td>
+        </tr>
+        `).join("");
+    }
+
+    document.getElementById("addDoctorBtn")
+        .addEventListener("click", () => openModal());
+
+    document.querySelectorAll("[data-close-modal]")
+        .forEach(btn => btn.addEventListener("click", closeModal));
+
+    search.addEventListener("input", renderDoctorsTable);
+
+    filter.addEventListener("change", renderDoctorsTable);
+
+    table.addEventListener("click", async function (e) {
+
+        const editId = e.target.dataset.edit;
+
+        const deleteId = e.target.dataset.delete;
+
+        if (editId) {
+
+            const doctor = doctors.find(d => d.id == editId);
+
+            openModal(doctor);
+
+        }
+
+        if (deleteId) {
+
+            if (!confirm("هل تريد حذف الطبيب؟")) return;
+
+            await fetch(API_URL + "/doctors/" + deleteId, {
+
+                method: "DELETE",
+
+                headers: {
+
+                    "Authorization": "Bearer " + getToken(),
+
+                    "Accept": "application/json"
+
+                }
+
+            });
+
+            loadDoctors();
+
+        }
+
     });
 
-    table.innerHTML = doctors.map((doctor) => `
-      <tr>
-        <td>${doctor.name}</td>
-        <td>${doctor.email}</td>
-        <td>${doctor.phone}</td>
-        <td>${doctor.department}</td>
-        <td>${badge(doctor.type)}</td>
-        <td>
-          <div class="actions">
-            <button class="btn btn-outline-secondary" type="button" data-edit="${doctor.id}">تعديل</button>
-            <button class="btn btn-danger" type="button" data-delete="${doctor.id}">حذف</button>
-          </div>
-        </td>
-      </tr>
-    `).join("");
-  }
+    form.addEventListener("submit", async function (e) {
 
-  document.getElementById("addDoctorBtn").addEventListener("click", () => openModal(null));
-  document.querySelectorAll("[data-close-modal]").forEach((button) => button.addEventListener("click", closeModal));
-  search.addEventListener("input", renderDoctorsTable);
-  filter.addEventListener("change", renderDoctorsTable);
+        e.preventDefault();
 
-  table.addEventListener("click", (event) => {
-    const editId = event.target.closest("[data-edit]")?.dataset.edit;
-    const deleteId = event.target.closest("[data-delete]")?.dataset.delete;
+        const body = {
 
-    if (editId) openModal(getDoctors().find((doctor) => doctor.id === Number(editId)));
-    if (deleteId && confirm("هل تريد حذف هذا المستخدم؟")) {
-      setStored("doctors", getDoctors().filter((doctor) => doctor.id !== Number(deleteId)));
-      renderDoctorsTable();
-    }
-  });
+            name: form.elements.name.value,email: form.elements.email.value,
 
-  form.addEventListener("submit", (event) => {
-    event.preventDefault();
-    const data = new FormData(form);
-    const doctor = {
-      id: editingId || Date.now(),
-      name: String(data.get("name")).trim(),
-      email: String(data.get("email")).trim(),
-      phone: String(data.get("phone")).trim(),
-      department: String(data.get("department")).trim(),
-      type: String(data.get("type"))
-    };
+            password: form.elements.password.value,
 
-    if (editingId) {
-      setStored("doctors", getDoctors().map((item) => item.id === editingId ? doctor : item));
-    } else {
-      setStored("doctors", [...getDoctors(), doctor]);
-    }
+            mobile: form.elements.phone.value,
 
-    closeModal();
-    renderDoctorsTable();
-  });
+            department_id: form.elements.department.value,
 
-  renderDoctorsTable();
+            doctor_type: form.elements.type.value
+
+        };
+
+        if (editingId) {
+
+            await fetch(API_URL + "/doctors/" + editingId, {
+
+                method: "PUT",
+
+                headers: {
+
+                    "Content-Type": "application/json",
+
+                    "Authorization": "Bearer " + getToken(),
+
+                    "Accept": "application/json"
+
+                },
+
+                body: JSON.stringify(body)
+
+            });
+
+        } else {
+
+            await fetch(API_URL + "/doctors", {
+
+                method: "POST",
+
+                headers: {
+
+                    "Content-Type": "application/json",
+
+                    "Authorization": "Bearer " + getToken(),
+
+                    "Accept": "application/json"
+
+                },
+
+                body: JSON.stringify(body)
+
+            });
+
+        }
+
+        closeModal();
+
+        loadDoctors();
+
+    });
+
+    loadDoctors();
+
 }

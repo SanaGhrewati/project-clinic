@@ -6,7 +6,7 @@ if (appointmentsUser) {
   const dateFilter = document.getElementById("dateFilter");
   const patientSearch = document.getElementById("patientSearch");
   const table = document.getElementById("appointmentsTable");
-  dateFilter.value = new Date().toISOString().slice(0, 10);
+  dateFilter.value = "";
 
   async function loadAppointments() {
     const params = new URLSearchParams();
@@ -17,7 +17,7 @@ if (appointmentsUser) {
     try {
       const response = await fetch(`${API_URL}/doctor/appointments?${params.toString()}`, {
         headers: {
-          "Authorization": `Bearer ${getToken()}`,
+          "Authorization":`Bearer ${getToken()}`,
           "Accept": "application/json"
         }
       });
@@ -32,29 +32,46 @@ if (appointmentsUser) {
       }
 
       const data = await response.json();
-      renderAppointments(data.appointments);
+      renderAppointments(data);
     } catch (error) {
       table.innerHTML = `<tr><td colspan="6" class="text-muted">${error.message || "حدث خطأ غير متوقع"}</td></tr>`;
     }
   }
 
   function renderAppointments(appointments) {
-    table.innerHTML = appointments.map((appointment) => `
-      <tr>
-        <td>${appointment.patient_name ?? "-"}</td>
-        <td>${appointment.date}</td>
-        <td>${appointment.time}</td>
-        <td>${badge(appointment.status)}</td>
-        <td>${appointment.diagnosis || "-"}</td>
-        <td>
-          <div class="actions">
-            <a class="btn btn-outline-secondary" href="patient-details.html?appointmentId=${appointment.id}&patientId=${appointment.patient_id}">فتح الملف</a>
-            <button class="btn btn-success" type="button" data-complete="${appointment.id}">Completed</button>
-          </div>
-        </td>
-      </tr>
-    `).join("");
-  }
+
+    table.innerHTML = appointments.map((appointment) => {
+
+        const patientName = appointment.patient?.user?.name ?? "-";
+        const date = appointment.appointment_datetime.substring(0, 10);
+        const time = appointment.appointment_datetime.substring(11, 16);
+
+        return` 
+        <tr>
+            <td>${patientName}</td>
+            <td>${date}</td>
+            <td>${time}</td>
+            <td>${badge(appointment.status)}</td>
+            <td>${appointment.diagnosis ?? "-"}</td>
+            <td>
+                <div class="actions">
+                    <a class="btn btn-outline-secondary"
+                       href="patient-details.html?appointmentId=${appointment.id}&patientId=${appointment.patient_id}">
+                        فتح الملف
+                    </a>
+
+                    <button
+                        class="btn btn-success"
+                        type="button"
+                        data-complete="${appointment.id}">
+                        Completed
+                    </button>
+                </div>
+            </td>
+        </tr>`
+        ;
+    }).join("");
+}
 
   async function completeAppointment(appointmentId) {
     try {
@@ -76,6 +93,7 @@ if (appointmentsUser) {
       if (!response.ok) {
         throw new Error("تعذر تحديث حالة الموعد");
       }
+
 
       await loadAppointments();
     } catch (error) {

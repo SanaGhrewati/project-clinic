@@ -10,44 +10,66 @@ if (staffDashboardUser) {
   document.getElementById("staffPageTitle").textContent = isLab ? "طلبات التحاليل" : "طلبات الأشعة";
   document.getElementById("requestTypeHead").textContent = isLab ? "التحليل المطلوب" : "نوع الأشعة";
 
-  function ownRequests() {
-    return getMedicalFiles().filter((file) => file.file_type === staffDashboardUser.role);
+  function authHeaders() {
+    return {
+      "Authorization": `Bearer ${getToken()}`,
+      "Accept": "application/json"
+    };
   }
 
-  function renderStats() {
-    const requests = ownRequests();
-    document.querySelector('[data-stat="pending"]').textContent = requests.filter((item) => item.status === "Pending").length;
-    document.querySelector('[data-stat="completed"]').textContent = requests.filter((item) => item.status === "Completed").length;
-    document.querySelector('[data-stat="total"]').textContent = requests.length;
+  // القيم الفعلية من الـ API هي "pending" / "done"، وهنا نحوّلها لنفس
+  // الأسماء اللي تعتمد عليها كلاسات الـ CSS الحالية (Pending / Completed)
+  function statusLabel(status) {
+    return status === "done" ? "Completed" : "Pending";
   }
 
-  function renderRequests() {
-    const status = statusFilter.value;
-    const query = search.value.trim().toLowerCase();
-    const rows = ownRequests().filter((request) => {
-      const patient = patientById(request.patientId);
-      const matchesStatus = status === "All" || request.status === status;
-      const matchesSearch = patient.name.toLowerCase().includes(query);
-      return matchesStatus && matchesSearch;
-    });
+  async function loadRequests() {
+    const params = new URLSearchParams();
+    if (statusFilter.value !== "All") params.set("status", statusFilter.value);
+    if (search.value.trim()) params.set("search", search.value.trim());
 
-    table.innerHTML = rows.map((request) => {
-      const patient = patientById(request.patientId);
-      return `
-        <tr>
-          <td>${patient.name}</td>
-          <td>${request.requestBy}</td>
-          <td>${request.requestName}</td>
-          <td>${badge(request.status)}</td>
-          <td>${request.date}</td>
-          <td><a class="btn btn-outline-secondary" href="request-details.html?id=${request.id}">فتح الطلب</a></td>
-        </tr>
-      `;
-    }).join("");
+    try {
+      const response = await fetch(`${API_URL}/staff/requests?${params.toString()}`, {
+        headers: authHeaders()
+      });
+
+      if (response.status === 401) {
+        logout();
+        return;
+      }
+
+      if (!response.ok) {
+        throw new Error("تعذر تحميل قائمة الطلبات");
+      }
+
+      const data = await response.json();
+      renderStats(data.stats);
+      renderRequests(data.requests);
+    } catch (error) {
+      table.innerHTML = `<tr><td colspan="6" class="text-muted">${error.message || "حدث خطأ غير متوقع"}</td></tr>`;
+    }
   }
 
-  statusFilter.addEventListener("change", renderRequests);
-  search.addEventListener("input", renderRequests);
-  renderStats();
-  renderRequests();
+  function renderStats(stats) {
+    document.querySelector('[data-stat="pending"]').textContent = stats.pending;
+    document.querySelector('[data-stat="completed"]').textContent = stats.completed;
+    document.querySelector('[data-stat="total"]').textContent = stats.total;
+  }
+
+  function renderRequests(requests) {
+    table.innerHTML = requests.map((request) => `
+      <tr>
+        <td>${request.patient_name ?? "-"}</td>
+        <td>${request.requested_by_name ?? "-"}</td>
+        <td>${request.request_name ?? "-"}</td>
+        <td>${badge(statusLabel(request.status))}</td>
+        <td>${request.created_at}</td>
+        <td><a class="btn btn-outline-secondary" href="request-details.html?id=${request.id}">فتح الطلب</a></td>
+      </tr>
+    `).join("");
+  }
+
+  statusFilter.addEventListener("change", loadRequests);
+  search.addEventListener("input", loadRequests);
+  loadRequests();
 }

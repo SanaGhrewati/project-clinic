@@ -71,10 +71,12 @@ if (patientDetailsUser) {
       document.getElementById("diagnosisText").value = "";
       return;
     }
+    const date = appointment.appointment_datetime?.substring(0, 10) ?? "-";
+    const time = appointment.appointment_datetime?.substring(11, 16) ?? "-";
     document.getElementById("appointmentInfo").innerHTML = `
       <li><span>رقم الموعد</span><strong>${appointment.id}</strong></li>
-      <li><span>التاريخ</span><strong>${appointment.date}</strong></li>
-      <li><span>الوقت</span><strong>${appointment.time}</strong></li>
+      <li><span>التاريخ</span><strong>${date}</strong></li>
+      <li><span>الوقت</span><strong>${time}</strong></li>
       <li><span>الحالة</span><strong>${badge(appointment.status)}</strong></li>
       <li><span>التشخيص الحالي</span><strong>${appointment.diagnosis || "-"}</strong></li>
     `;
@@ -118,7 +120,7 @@ if (patientDetailsUser) {
     document.getElementById("appointmentsTab").innerHTML = makeHistoryTable(
       ["التاريخ", "التشخيص", "الحالة"],
       appointments.map((item) => `
-        <tr><td>${item.date}</td><td>${item.diagnosis || "-"}</td><td>${badge(item.status)}</td></tr>
+        <tr><td>${item.appointment_datetime}</td><td>${item.diagnosis || "-"}</td><td>${badge(item.status)}</td></tr>
       `)
     );
   }
