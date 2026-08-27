@@ -46,7 +46,7 @@ if (appointmentsUser) {
         const date = appointment.appointment_datetime.substring(0, 10);
         const time = appointment.appointment_datetime.substring(11, 16);
 
-        return` 
+        return`
         <tr>
             <td>${patientName}</td>
             <td>${date}</td>
