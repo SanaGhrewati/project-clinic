@@ -25,13 +25,16 @@
           <div class="user-chip"><span class="avatar" data-avatar></span><span data-user-name></span><button class="btn btn-outline-secondary" data-logout type="button">تسجيل الخروج</button></div>
         </header>
 
+        <div class="mb-3">
+          <button id="addAppointmentBtn" class="btn btn-primary" type="button">إضافة موعد</button>
+        </div>
+
         <section class="toolbar three">
           <select id="statusFilter" class="form-select">
-              <option value="All">كل الحالات</option>
-              <option value="available">متاح</option>
-              <option value="booked">محجوز</option>
-              <option value="completed">مكتمل</option>
-              <option value="cancelled">تم الإلغاء</option>
+            <option value="All">كل الحالات</option>
+            <option value="Pending">Pending</option>
+            <option value="Completed">Completed</option>
+            <option value="Cancelled">Cancelled</option>
           </select>
           <input id="dateFilter" class="form-control" type="date">
           <input id="patientSearch" class="form-control" type="search" placeholder="بحث باسم المريض">
@@ -44,6 +47,33 @@
           </table>
         </section>
       </main>
+    </div>
+
+    <div id="appointmentModal" class="modal-backdrop">
+      <section class="modal-panel">
+        <div class="modal-head">
+          <h2>إضافة موعد متاح</h2>
+          <button class="btn btn-outline-secondary" type="button" data-close-modal>إغلاق</button>
+        </div>
+        <form id="appointmentForm">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label" for="appointmentDate">التاريخ</label>
+              <input id="appointmentDate" class="form-control" name="date" type="date" required>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label" for="appointmentTime">الوقت</label>
+              <input id="appointmentTime" class="form-control" name="time" type="time" required>
+            </div>
+          </div>
+          <div id="appointmentFormMessage" class="alert alert-success d-none mb-3"></div>
+          <div id="addedTimesList"></div>
+          <div class="actions">
+            <button class="btn btn-primary" type="submit">حفظ الموعد</button>
+            <button class="btn btn-outline-secondary" type="button" data-close-modal>إغلاق</button>
+          </div>
+        </form>
+      </section>
     </div>
 
     <script src="../../assets/js/config.js"></script>
