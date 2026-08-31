@@ -5,41 +5,58 @@
  */
 
 async function staffApiFetch(path, options = {}) {
-  const token = getToken();
 
-  let response;
-  try {
-    response = await fetch(`${API_URL}${path}`, {
-      ...options,
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        Authorization: `Bearer ${token}`,
-        ...(options.headers || {})
-      }
-    });
-  } catch (networkError) {
-    throw new Error("تعذر الاتصال بالخادم، تحقق من اتصال الشبكة");
-  }
+    const token = getToken();
 
-  // انتهاء صلاحية الجلسة/التوكن: نسجّل الخروج فورًا بدل عرض بيانات قديمة أو فاسدة.
-  if (response.status === 401) {
-    logout();
-    return null;
-  }
+    let response;
 
-  let data = null;
-  try {
-    data = await response.json();
-  } catch {
-    data = null;
-  }
+    try {
 
-  if (!response.ok) {
-    throw new Error((data && data.message) || "حدث خطأ أثناء الاتصال بالخادم");
-  }
+        const headers = {
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+            ...(options.headers || {})
+        };
 
-  return data;
+        // إذا كان body ليس FormData نرسل JSON
+        if (!(options.body instanceof FormData)) {
+            headers["Content-Type"] = "application/json";
+        }
+
+        response = await fetch(`${API_URL}${path}`, {
+            ...options,
+            headers
+        });
+
+    } catch (networkError) {
+
+        throw new Error(
+            "تعذر الاتصال بالخادم، تحقق من اتصال الشبكة"
+        );
+    }
+
+    if (response.status === 401) {
+        logout();
+        return null;
+    }
+
+    let data = null;
+
+    try {
+        data = await response.json();
+    } catch {
+        data = null;
+    }
+
+    if (!response.ok) {
+
+        throw new Error(
+            (data && data.message)
+                || "حدث خطأ أثناء الاتصال بالخادم"
+        );
+    }
+
+    return data;
 }
 
 // بعض نقاط Laravel تُعيد القوائم كمصفوفة مباشرة، وبعضها يغلّفها داخل { data: [...] }.

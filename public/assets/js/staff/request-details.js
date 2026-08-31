@@ -14,6 +14,7 @@ if (staffRequestUser) {
   const requestNameEl = document.getElementById("requestName");
   const resultText = document.getElementById("resultText");
   const currentFileInfo = document.getElementById("currentFileInfo");
+  const resultFile = document.getElementById("resultFile");
   const saveBtn = document.getElementById("saveResultBtn");
 
   let currentRequest = null;
@@ -41,44 +42,95 @@ if (staffRequestUser) {
     `;
   }
 
-  async function loadRequest() {
-    if (!requestId) {
-      showAlert("requestMessage", "لم يتم تحديد رقم الطلب في الرابط", "danger");
-      saveBtn.disabled = true;
-      return;
-    }
+  
+    async function loadRequest() {
+      if (!requestId) {
+          showAlert(
+              "requestMessage",
+              "لم يتم تحديد رقم الطلب في الرابط",
+              "danger"
+          );
 
-    try {
-      currentRequest = await staffApiFetch(`/staff/requests/${requestId}`);
-      if (currentRequest) renderRequest();
-    } catch (error) {
-      showAlert("requestMessage", error.message, "danger");
-      saveBtn.disabled = true;
+          saveBtn.disabled = true;
+          return;
+      }
+
+      try {
+          const payload = await staffApiFetch(
+              `/staff/requests/${requestId}`
+          );
+
+          if (!payload || !payload.request) {
+              throw new Error("لم يتم العثور على بيانات الطلب");
+          }
+
+          currentRequest = payload.request;
+
+          renderRequest();
+
+      } catch (error) {
+          showAlert(
+              "requestMessage",
+              error.message,
+              "danger"
+          );
+
+          saveBtn.disabled = true;
+      }
     }
-  }
 
   saveBtn.addEventListener("click", async () => {
-    if (!currentRequest || !requestId) return;
+        if (!currentRequest || !requestId) {
+            return;
+        }
 
-    // نرسل فقط result كما هو محدد. file_url لا يُرسل هنا لعدم وجود نقطة رفع ملفات فعلية
-    // بعد (راجع ملاحظة الفحص) — ولن يُختلق له أي قيمة وهمية من اسم الملف المحلي.
-    const payload = { result: resultText.value.trim() };
+        const formData = new FormData();
 
-    saveBtn.disabled = true;
-    try {
-      const updated = await staffApiFetch(`/staff/requests/${requestId}`, {
-        method: "PUT",
-        body: JSON.stringify(payload)
-      });
-      currentRequest = updated && typeof updated === "object" ? updated : { ...currentRequest, ...payload };
-      renderRequest();
-      showAlert("requestMessage", isLab ? "تم حفظ نتيجة التحليل" : "تم حفظ تقرير الأشعة");
-    } catch (error) {
-      showAlert("requestMessage", error.message, "danger");
-    } finally {
-      saveBtn.disabled = false;
-    }
-  });
+        // نتيجة التحليل / تقرير الأشعة
+        formData.append("result", resultText.value.trim());
+
+        // الملف، إذا اختار المختص ملفًا
+        if (resultFile.files.length > 0) {
+            formData.append("file", resultFile.files[0]);
+        }
+
+        saveBtn.disabled = true;
+
+        try {
+            const updated = await staffApiFetch(
+                `/staff/requests/${requestId}`,
+                {
+                    method: "POST",
+                    body: formData
+                }
+            );
+
+            if (updated && updated.request) {
+                currentRequest = updated.request;
+            }
+
+            renderRequest();
+
+            showAlert(
+                "requestMessage",
+                isLab
+                    ? "تم حفظ نتيجة التحليل والملف بنجاح"
+                    : "تم حفظ تقرير الأشعة والملف بنجاح"
+            );
+
+        } catch (error) {
+
+            showAlert(
+                "requestMessage",
+                error.message,
+                "danger"
+            );
+
+        } finally {
+            saveBtn.disabled = false;
+        }
+});
 
   loadRequest();
 }
+

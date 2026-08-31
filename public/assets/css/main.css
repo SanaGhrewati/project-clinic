@@ -63,9 +63,16 @@ textarea.form-control {
   height: 38px;
   place-items: center;
   border-radius: 8px;
-  background: #2f9fbb;
-  color: #fff;
-  font-weight: 700;
+  background: #fff;
+  overflow: hidden;
+  padding: 4px;
+}
+
+.brand-mark img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
 }
 
 .nav-menu {
@@ -356,8 +363,8 @@ body {
 }
 
 .brand-mark {
-  background: linear-gradient(135deg, var(--mint), #2f9fbb);
-  box-shadow: 0 10px 24px rgba(47, 191, 159, 0.22);
+  background: #fff;
+  box-shadow: 0 10px 24px rgba(18, 33, 44, 0.14);
 }
 
 .nav-menu a {

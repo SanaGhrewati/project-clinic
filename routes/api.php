@@ -45,6 +45,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/doctor/dashboard', [DoctorController::class, 'dashboard']);
 
+    Route::post('/doctor/appointments', [DoctorController::class, 'createAppointment']);
+
     Route::patch('/doctor/appointments/{id}', [DoctorController::class, 'completeAppointment']);
 
     Route::get('/doctor/patients/{patient}', [DoctorPatientController::class, 'show']);
@@ -61,7 +63,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/staff/requests/{id}', [StaffController::class, 'show']);
     
-    Route::put('/staff/requests/{id}', [StaffController::class, 'update']);
+    Route::post('/staff/requests/{id}', [StaffController::class, 'update']);
     
     Route::get('/staff/stats', [StaffController::class, 'stats']);
 

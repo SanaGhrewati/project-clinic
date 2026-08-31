@@ -16,7 +16,10 @@ class StaffController extends Controller
     {
         $doctor = Auth::user()->doctor;
 
-        if (!$doctor || !in_array($doctor->doctor_type, ['Lab', 'Radiology'])) {
+        if (
+            !$doctor ||
+            !in_array($doctor->doctor_type, ['Lab', 'Radiology'])
+        ) {
             return response()->json([
                 'message' => 'Unauthorized'
             ], 403);
@@ -45,10 +48,16 @@ class StaffController extends Controller
 
         // البحث باسم المريض
         if ($request->filled('search')) {
+
             $search = $request->search;
 
             $query->whereHas('patient.user', function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%");
+
+                $q->where(
+                    'name',
+                    'like',
+                    "%{$search}%"
+                );
             });
         }
 
@@ -56,16 +65,33 @@ class StaffController extends Controller
             ->latest()
             ->get()
             ->map(function ($medicalFile) {
+
                 return [
                     'id' => $medicalFile->id,
-                    'patient_id' => $medicalFile->patient_id,
-                    'patient_name' => $medicalFile->patient->user->name ?? '-',
-                    'doctor_name' => $medicalFile->requestedBy->user->name ?? '-',
-                    'file_type' => $medicalFile->file_type,
-                    'file_url' => $medicalFile->file_url,
-                    'result' => $medicalFile->result,
-                    'status' => $medicalFile->status,
-                    'created_at' => $medicalFile->created_at,
+
+                    'patient_id' =>
+                        $medicalFile->patient_id,
+
+                    'patient_name' =>
+                        $medicalFile->patient->user->name ?? '-',
+
+                    'doctor_name' =>
+                        $medicalFile->requestedBy->user->name ?? '-',
+
+                    'file_type' =>
+                        $medicalFile->file_type,
+
+                    'file_url' =>
+                        $medicalFile->file_url,
+
+                    'result' =>
+                        $medicalFile->result,
+
+                    'status' =>
+                        $medicalFile->status,
+
+                    'created_at' =>
+                        $medicalFile->created_at,
                 ];
             });
 
@@ -74,6 +100,7 @@ class StaffController extends Controller
         ]);
     }
 
+
     /**
      * عرض تفاصيل طلب واحد
      */
@@ -81,7 +108,10 @@ class StaffController extends Controller
     {
         $doctor = Auth::user()->doctor;
 
-        if (!$doctor || !in_array($doctor->doctor_type, ['Lab', 'Radiology'])) {
+        if (
+            !$doctor ||
+            !in_array($doctor->doctor_type, ['Lab', 'Radiology'])
+        ) {
             return response()->json([
                 'message' => 'Unauthorized'
             ], 403);
@@ -95,8 +125,13 @@ class StaffController extends Controller
 
         // التأكد أن نوع الطلب يناسب اختصاص المختص
         if (
-            ($doctor->doctor_type === 'Lab' && $medicalFile->file_type !== 'Lab') ||
-            ($doctor->doctor_type === 'Radiology' && $medicalFile->file_type !== 'Radiology')
+            ($doctor->doctor_type === 'Lab' &&
+                $medicalFile->file_type !== 'Lab')
+
+            ||
+
+            ($doctor->doctor_type === 'Radiology' &&
+                $medicalFile->file_type !== 'Radiology')
         ) {
             return response()->json([
                 'message' => 'Unauthorized'
@@ -106,59 +141,110 @@ class StaffController extends Controller
         return response()->json([
             'request' => [
                 'id' => $medicalFile->id,
-                'patient_id' => $medicalFile->patient_id,
-                'patient_name' => $medicalFile->patient->user->name ?? '-',
-                'doctor_name' => $medicalFile->requestedBy->user->name ?? '-',
-                'file_type' => $medicalFile->file_type,
-                'file_url' => $medicalFile->file_url,
-                'result' => $medicalFile->result,
-                'status' => $medicalFile->status,
-                'created_at' => $medicalFile->created_at,
+
+                'patient_id' =>
+                    $medicalFile->patient_id,
+
+                'patient_name' =>
+                    $medicalFile->patient->user->name ?? '-',
+
+                'doctor_name' =>
+                    $medicalFile->requestedBy->user->name ?? '-',
+
+                'file_type' =>
+                    $medicalFile->file_type,
+
+                'file_url' =>
+                    $medicalFile->file_url,
+
+                'result' =>
+                    $medicalFile->result,
+                    'status' =>
+                    $medicalFile->status,
+
+                'created_at' =>
+                    $medicalFile->created_at,
             ]
         ]);
     }
 
+
     /**
      * حفظ نتيجة الفحص
      */
+    
     public function update(Request $request, $id)
-    {
-        $doctor = Auth::user()->doctor;
+{
+    $doctor = Auth::user()->doctor;
 
-        if (!$doctor || !in_array($doctor->doctor_type, ['Lab', 'Radiology'])) {
-            return response()->json([
-                'message' => 'Unauthorized'
-            ], 403);
-        }
-
-        $medicalFile = MedicalFile::findOrFail($id);
-        // التأكد من أن الطلب يناسب اختصاص المختص
-        if (
-            ($doctor->doctor_type === 'Lab' && $medicalFile->file_type !== 'Lab') ||
-            ($doctor->doctor_type === 'Radiology' && $medicalFile->file_type !== 'Radiology')
-        ) {
-            return response()->json([
-                'message' => 'Unauthorized'
-            ], 403);
-        }
-
-        $request->validate([
-            'result' => 'nullable|string',
-            'file_url' => 'nullable|string|max:255',
-        ]);
-
-        $medicalFile->result = $request->result;
-        $medicalFile->file_url = $request->file_url;
-        $medicalFile->performed_by = $doctor->id;
-        $medicalFile->status = 'done';
-
-        $medicalFile->save();
-
+    if (
+        !$doctor ||
+        !in_array($doctor->doctor_type, ['Lab', 'Radiology'])
+    ) {
         return response()->json([
-            'message' => 'Result saved successfully',
-            'request' => $medicalFile
-        ]);
+            'message' => 'Unauthorized'
+        ], 403);
     }
+
+    $medicalFile = MedicalFile::findOrFail($id);
+
+    // التأكد أن الطلب يناسب اختصاص المختص
+    if (
+        ($doctor->doctor_type === 'Lab' &&
+            $medicalFile->file_type !== 'Lab') ||
+
+        ($doctor->doctor_type === 'Radiology' &&
+            $medicalFile->file_type !== 'Radiology')
+    ) {
+        return response()->json([
+            'message' => 'Unauthorized'
+        ], 403);
+    }
+
+    $request->validate([
+        'result' => 'nullable|string',
+        'file' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:10240',
+    ]);
+
+    // حفظ النتيجة النصية
+    $medicalFile->result = $request->result;
+
+    // حفظ الملف إذا تم اختياره
+    if ($request->hasFile('file')) {
+
+        $file = $request->file('file');
+
+        $path = $file->store(
+            'medical-files',
+            'public'
+        );
+
+        $medicalFile->file_url = 'storage/' . $path;
+    }
+
+    // تسجيل المختص الذي نفذ الفحص
+    $medicalFile->performed_by = $doctor->id;
+
+    // تغيير الحالة
+    $medicalFile->status = 'done';
+
+    $medicalFile->save();
+
+    return response()->json([
+        'message' => 'Result saved successfully',
+        'request' => [
+            'id' => $medicalFile->id,
+            'patient_id' => $medicalFile->patient_id,
+            'patient_name' => $medicalFile->patient->user->name ?? '-',
+            'doctor_name' => $medicalFile->requestedBy->user->name ?? '-',
+            'file_type' => $medicalFile->file_type,
+            'file_url' => $medicalFile->file_url,
+            'result' => $medicalFile->result,
+            'status' => $medicalFile->status,
+            'created_at' => $medicalFile->created_at,
+        ]
+    ]);
+}
 
     /**
      * إحصائيات لوحة المختص
@@ -167,7 +253,10 @@ class StaffController extends Controller
     {
         $doctor = Auth::user()->doctor;
 
-        if (!$doctor || !in_array($doctor->doctor_type, ['Lab', 'Radiology'])) {
+        if (
+            !$doctor ||
+            !in_array($doctor->doctor_type, ['Lab', 'Radiology'])
+        ) {
             return response()->json([
                 'message' => 'Unauthorized'
             ], 403);
@@ -176,23 +265,35 @@ class StaffController extends Controller
         $query = MedicalFile::query();
 
         if ($doctor->doctor_type === 'Lab') {
-            $query->where('file_type', 'Lab');
+
+            $query->where(
+                'file_type',
+                'Lab'
+            );
         }
 
         if ($doctor->doctor_type === 'Radiology') {
-            $query->where('file_type', 'Radiology');
+
+            $query->where(
+                'file_type',
+                'Radiology'
+            );
         }
 
         return response()->json([
-            'pending' => (clone $query)
-                ->where('status', 'pending')
-                ->count(),
 
-            'completed' => (clone $query)
-                ->where('status', 'done')
-                ->count(),
+            'pending' =>
+                (clone $query)
+                    ->where('status', 'pending')
+                    ->count(),
 
-            'total' => $query->count(),
+            'completed' =>
+                (clone $query)
+                    ->where('status', 'done')
+                    ->count(),
+
+            'total' =>
+                $query->count(),
         ]);
     }
 }

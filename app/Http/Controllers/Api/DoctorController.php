@@ -47,6 +47,50 @@ class DoctorController extends Controller
         return response()->json($appointments);
     }
 
+
+    public function createAppointment(Request $request)
+    {
+        $doctor = $request->user()->doctor;
+
+        if (!$doctor) {
+            return response()->json([
+                'message' => 'Doctor not found'
+            ], 403);
+        }
+
+        $request->validate([
+            'appointment_datetime' => [
+                'required',
+                'date',
+                'after_or_equal:now',
+            ],
+        ]);
+
+        // التأكد أن الطبيب لا يملك موعدًا آخر في نفس الوقت
+        $exists = Appointment::where('doctor_id', $doctor->id)
+            ->where('appointment_datetime', $request->appointment_datetime)
+            ->exists();
+
+        if ($exists) {
+            return response()->json([
+                'message' => 'يوجد موعد في هذا التاريخ والوقت مسبقًا'
+            ], 422);
+        }
+
+        $appointment = Appointment::create([
+            'appointment_datetime' => $request->appointment_datetime,
+            'status' => 'available',
+            'doctor_id' => $doctor->id,
+            'patient_id' => null,
+            'diagnosis' => null,
+        ]);
+
+        return response()->json([
+            'message' => 'تمت إضافة الموعد بنجاح',
+            'appointment' => $appointment
+        ], 201);
+    }
+
     public function completeAppointment(Request $request, $id)
     {
         $doctor = $request->user()->doctor;
