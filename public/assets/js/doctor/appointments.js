@@ -18,8 +18,6 @@ if (appointmentsUser) {
         return { date: datePart, time: timePart.slice(0, 5) };
     }
 
-    dateFilter.value = todayISODate();
-
     function renderAppointmentsTable() {
         const status = statusFilter.value;
         const date = dateFilter.value;
