@@ -16,16 +16,37 @@ if (adminDoctorUser) {
 
     async function loadDoctors() {
 
-        const response = await fetch(API_URL + "/doctors", {
-            headers: {
-                "Authorization": "Bearer " + getToken(),
-                "Accept": "application/json"
+        try {
+
+            const response = await fetch(API_URL + "/doctors", {
+                headers: {
+                    "Authorization": "Bearer " + getToken(),
+                    "Accept": "application/json"
+                }
+            });
+
+            if (response.status === 401) {
+                logout();
+                return;
             }
-        });
 
-        doctors = await response.json();
+            const data = await response.json().catch(() => null);
 
-        renderDoctorsTable();
+            if (!response.ok) {
+                throw new Error((data && data.message) || "تعذر تحميل قائمة الأطباء");
+            }
+
+            doctors = Array.isArray(data) ? data : [];
+
+            renderDoctorsTable();
+
+        } catch (error) {
+
+            doctors = [];
+            table.innerHTML = "";
+            showAlert("doctorsMessage", error.message || "حدث خطأ غير متوقع", "danger");
+
+        }
 
     }
 
@@ -84,7 +105,7 @@ if (adminDoctorUser) {
 
         });
 
-        table.innerHTML = filtered.map(doctor => 
+        table.innerHTML = filtered.map(doctor =>
         `<tr>
             <td>${doctor.user.name}</td>
             <td>${doctor.user.email}</td>
@@ -136,21 +157,41 @@ if (adminDoctorUser) {
 
             if (!confirm("هل تريد حذف الطبيب؟")) return;
 
-            await fetch(API_URL + "/doctors/" + deleteId, {
+            try {
 
-                method: "DELETE",
+                const response = await fetch(API_URL + "/doctors/" + deleteId, {
 
-                headers: {
+                    method: "DELETE",
 
-                    "Authorization": "Bearer " + getToken(),
+                    headers: {
 
-                    "Accept": "application/json"
+                        "Authorization": "Bearer " + getToken(),
 
+                        "Accept": "application/json"
+
+                    }
+
+                });
+
+                if (response.status === 401) {
+                    logout();
+                    return;
                 }
 
-            });
+                const data = await response.json().catch(() => null);
 
-            loadDoctors();
+                if (!response.ok) {
+                    throw new Error((data && data.message) || "تعذر حذف الطبيب");
+                }
+
+                showAlert("doctorsMessage", (data && data.message) || "تم حذف الطبيب بنجاح");
+                await loadDoctors();
+
+            } catch (error) {
+
+                showAlert("doctorsMessage", error.message || "حدث خطأ غير متوقع", "danger");
+
+            }
 
         }
 
@@ -174,51 +215,71 @@ if (adminDoctorUser) {
 
         };
 
-        if (editingId) {
+        const submitButton = form.querySelector('button[type="submit"]');
+        submitButton.disabled = true;
 
-            await fetch(API_URL + "/doctors/" + editingId, {
+        try {
 
-                method: "PUT",
+            const response = editingId
+                ? await fetch(API_URL + "/doctors/" + editingId, {
 
-                headers: {
+                    method: "PUT",
 
-                    "Content-Type": "application/json",
+                    headers: {
 
-                    "Authorization": "Bearer " + getToken(),
+                        "Content-Type": "application/json",
 
-                    "Accept": "application/json"
+                        "Authorization": "Bearer " + getToken(),
 
-                },
+                        "Accept": "application/json"
 
-                body: JSON.stringify(body)
+                    },
 
-            });
+                    body: JSON.stringify(body)
 
-        } else {
+                })
+                : await fetch(API_URL + "/doctors", {
 
-            await fetch(API_URL + "/doctors", {
+                    method: "POST",
 
-                method: "POST",
+                    headers: {
 
-                headers: {
+                        "Content-Type": "application/json",
 
-                    "Content-Type": "application/json",
+                        "Authorization": "Bearer " + getToken(),
 
-                    "Authorization": "Bearer " + getToken(),
+                        "Accept": "application/json"
 
-                    "Accept": "application/json"
+                    },
 
-                },
+                    body: JSON.stringify(body)
 
-                body: JSON.stringify(body)
+                });
 
-            });
+            if (response.status === 401) {
+                logout();
+                return;
+            }
+
+            const data = await response.json().catch(() => null);
+
+            if (!response.ok) {
+                throw new Error((data && data.message) || "تعذر حفظ بيانات الطبيب");
+            }
+
+            closeModal();
+            showAlert("doctorsMessage", (data && data.message) || "تم الحفظ بنجاح");
+            await loadDoctors();
+
+        } catch (error) {
+
+            showAlert("doctorsMessage", error.message || "حدث خطأ غير متوقع", "danger");
+
+        } finally {
+
+            submitButton.disabled = false;
 
         }
-
-        closeModal();
-
-        loadDoctors();
 
     });
 

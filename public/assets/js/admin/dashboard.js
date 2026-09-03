@@ -21,7 +21,16 @@ async function loadStats() {
 
         });
 
-        const stats = await response.json();
+        if (response.status === 401) {
+            logout();
+            return;
+        }
+
+        const stats = await response.json().catch(() => null);
+
+        if (!response.ok || !stats) {
+            throw new Error((stats && stats.message) || "تعذر تحميل إحصائيات لوحة الإدارة");
+        }
 
         Object.entries(stats).forEach(([key, value]) => {
 
@@ -35,9 +44,8 @@ async function loadStats() {
 
     } catch (error) {
 
-        console.log(error);
+        showAlert("dashboardMessage", error.message || "حدث خطأ غير متوقع", "danger");
 
     }
 
 }
-
