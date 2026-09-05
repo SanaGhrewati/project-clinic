@@ -28,4 +28,8 @@ class Appointment extends Model
     {
         return $this->hasMany(Prescription::class);
     }
+
+    protected $casts = [
+        'appointment_datetime' => 'datetime',
+    ];
 }

@@ -9,14 +9,19 @@ class PrescriptionSeeder extends Seeder
 {
     public function run(): void
     {
+
         $appointment = DB::table('appointments')
-            ->where('appointment_datetime', '2026-09-12 10:00:00')
-            ->where('status', 'completed')
+            ->join('doctors', 'appointments.doctor_id', '=', 'doctors.id')
+            ->join('users', 'doctors.user_id', '=', 'users.id')
+            ->where('users.email', 'nobogh@clinic.com')
+            ->where('appointments.appointment_datetime', '2026-09-12 10:00:00')
+            ->where('appointments.status', 'completed')
             ->first();
 
         if (!$appointment) {
             return;
         }
+
 
         DB::table('prescriptions')->insert([
             [

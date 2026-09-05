@@ -9,62 +9,12 @@ class MedicalFileSeeder extends Seeder
 {
     public function run(): void
     {
-        // =========================
-        // الحصول على المرضى عن طريق الإيميل
-        // =========================
-
-        $mohamed = DB::table('patients')
-            ->join('users', 'patients.user_id', '=', 'users.id')
-            ->where('users.email', 'mohamed@gmail.com')
-            ->value('patients.id');
-
-        $fatima = DB::table('patients')
-            ->join('users', 'patients.user_id', '=', 'users.id')
-            ->where('users.email', 'fatima@gmail.com')
-            ->value('patients.id');
-
-        $khalid = DB::table('patients')
-            ->join('users', 'patients.user_id', '=', 'users.id')
-            ->where('users.email', 'khalid@gmail.com')
-            ->value('patients.id');
-
-
-        // =========================
-        // الحصول على الأطباء عن طريق الإيميل
-        // =========================
-
-        $dima = DB::table('doctors')
-            ->join('users', 'doctors.user_id', '=', 'users.id')
-            ->where('users.email', 'dima@clinic.com')
-            ->value('doctors.id');
-
-        $nobogh = DB::table('doctors')
-            ->join('users', 'doctors.user_id', '=', 'users.id')
-            ->where('users.email', 'nobogh@clinic.com')
-            ->value('doctors.id');
-
-        $sana = DB::table('doctors')
-            ->join('users', 'doctors.user_id', '=', 'users.id')
-            ->where('users.email', 'sana@clinic.com')
-            ->value('doctors.id');
-
-        $noor = DB::table('doctors')
-            ->join('users', 'doctors.user_id', '=', 'users.id')
-            ->where('users.email', 'noor@clinic.com')
-            ->value('doctors.id');
-
-
-        // =========================
-        // إدخال الملفات الطبية
-        // =========================
-
         DB::table('medical_files')->insert([
 
-            // نتيجة تحليل مخبري مكتملة
             [
-                'patient_id' => $mohamed,
-                'requested_by' => $dima,
-                'performed_by' => $sana,
+                'patient_id' => 1,
+                'requested_by' => 1,
+                'performed_by' => 4,
                 'file_type' => 'Lab',
                 'file_url' => 'https://example.com/files/lab-result-1.pdf',
                 'result' => 'Normal blood test results.',
@@ -73,10 +23,9 @@ class MedicalFileSeeder extends Seeder
                 'updated_at' => now(),
             ],
 
-            // طلب أشعة قيد الانتظار
             [
-                'patient_id' => $fatima,
-                'requested_by' => $dima,
+                'patient_id' => 2,
+                'requested_by' => 2,
                 'performed_by' => null,
                 'file_type' => 'Radiology',
                 'file_url' => null,
@@ -86,11 +35,10 @@ class MedicalFileSeeder extends Seeder
                 'updated_at' => now(),
             ],
 
-            // نتيجة أشعة مكتملة
             [
-                'patient_id' => $khalid,
-                'requested_by' => $nobogh,
-                'performed_by' => $noor,
+                'patient_id' => 3,
+                'requested_by' => 2,
+                'performed_by' => 3,
                 'file_type' => 'Radiology',
                 'file_url' => 'https://example.com/files/xray-1.jpg',
                 'result' => 'No abnormal findings detected.',
@@ -98,6 +46,8 @@ class MedicalFileSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
+
+
 
         ]);
     }

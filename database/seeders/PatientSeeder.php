@@ -10,7 +10,6 @@ class PatientSeeder extends Seeder
     public function run(): void
     {
         $patients = [
-
             [
                 'email' => 'mohamed@gmail.com',
                 'mobile' => '0551234567',
@@ -18,7 +17,6 @@ class PatientSeeder extends Seeder
                 'birthdate' => '1990-05-15',
                 'address' => 'الفرقان',
             ],
-
             [
                 'email' => 'fatima@gmail.com',
                 'mobile' => '0559876543',
@@ -26,7 +24,6 @@ class PatientSeeder extends Seeder
                 'birthdate' => '1985-11-20',
                 'address' => 'شارع النيل',
             ],
-
             [
                 'email' => 'khalid@gmail.com',
                 'mobile' => '0553334444',
@@ -34,7 +31,6 @@ class PatientSeeder extends Seeder
                 'birthdate' => '1995-03-10',
                 'address' => 'الموغامبو',
             ],
-
         ];
 
         foreach ($patients as $patient) {
@@ -42,9 +38,6 @@ class PatientSeeder extends Seeder
             $user = DB::table('users')
                 ->where('email', $patient['email'])
                 ->first();
-            if (!$user) {
-                continue;
-            }
 
             DB::table('patients')->insert([
                 'mobile' => $patient['mobile'],

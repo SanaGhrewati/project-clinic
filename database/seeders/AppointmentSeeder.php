@@ -9,7 +9,6 @@ class AppointmentSeeder extends Seeder
 {
     public function run(): void
     {
-        // الحصول على أطباء محددين عن طريق الإيميل
         $dima = DB::table('doctors')
             ->join('users', 'doctors.user_id', '=', 'users.id')
             ->where('users.email', 'dima@clinic.com')
@@ -20,7 +19,6 @@ class AppointmentSeeder extends Seeder
             ->where('users.email', 'nobogh@clinic.com')
             ->value('doctors.id');
 
-        // الحصول على المرضى عن طريق الإيميل
         $mohamed = DB::table('patients')
             ->join('users', 'patients.user_id', '=', 'users.id')
             ->where('users.email', 'mohamed@gmail.com')
@@ -32,8 +30,6 @@ class AppointmentSeeder extends Seeder
             ->value('patients.id');
 
         DB::table('appointments')->insert([
-
-            // مواعيد ديما
             [
                 'appointment_datetime' => '2026-09-10 09:00:00',
                 'status' => 'available',
@@ -43,7 +39,6 @@ class AppointmentSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
-
             [
                 'appointment_datetime' => '2026-09-10 10:00:00',
                 'status' => 'available',
@@ -53,17 +48,15 @@ class AppointmentSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
-
             [
                 'appointment_datetime' => '2026-09-10 11:00:00',
                 'status' => 'available',
                 'diagnosis' => null,
-                'doctor_id' => $dima,
+                'doctor_id' => $nobogh,
                 'patient_id' => null,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
-
             [
                 'appointment_datetime' => '2026-09-11 09:00:00',
                 'status' => 'booked',
@@ -74,7 +67,6 @@ class AppointmentSeeder extends Seeder
                 'updated_at' => now(),
             ],
 
-            // مواعيد نبوغ
             [
                 'appointment_datetime' => '2026-09-10 09:00:00',
                 'status' => 'available',
@@ -84,7 +76,6 @@ class AppointmentSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
-
             [
                 'appointment_datetime' => '2026-09-10 10:00:00',
                 'status' => 'available',
@@ -94,7 +85,6 @@ class AppointmentSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
-
             [
                 'appointment_datetime' => '2026-09-11 10:00:00',
                 'status' => 'booked',
@@ -104,7 +94,6 @@ class AppointmentSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
-
             [
                 'appointment_datetime' => '2026-09-12 10:00:00',
                 'status' => 'completed',

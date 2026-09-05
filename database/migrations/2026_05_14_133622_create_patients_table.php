@@ -6,24 +6,24 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    
+
     public function up(): void
     {
         Schema::create('patients', function (Blueprint $table) {
-         $table->id();
-         $table->string('mobile');
-         $table->enum('gender', ['male', 'female']);
-         $table->date('birthdate');
-         $table->string('address');
-         $table->foreignId('user_id')
-          ->unique()
-          ->constrained()
-          ->onDelete('cascade');
-         $table->timestamps();
+            $table->id();
+            $table->string('mobile');
+            $table->enum('gender', ['male', 'female']);
+            $table->date('birthdate');
+            $table->string('address');
+            $table->foreignId('user_id')
+                ->unique()
+                ->constrained()
+                ->onDelete('cascade');
+            $table->timestamps();
         });
     }
 
-    
+
     public function down(): void
     {
         Schema::dropIfExists('patients');

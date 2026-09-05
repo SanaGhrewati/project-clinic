@@ -6,45 +6,43 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    
+
     public function up(): void
     {
-      Schema::create('medical_files', function (Blueprint $table) {
-        $table->id();
+        Schema::create('medical_files', function (Blueprint $table) {
+            $table->id();
 
-        $table->foreignId('patient_id')
-            ->constrained('patients')
-            ->onDelete('cascade');
+            $table->foreignId('patient_id')
+                ->constrained('patients')
+                ->onDelete('cascade');
 
-        $table->foreignId('requested_by')
-            ->constrained('doctors')
-            ->onDelete('cascade');
+            $table->foreignId('requested_by')
+                ->constrained('doctors')
+                ->onDelete('cascade');
 
-        $table->foreignId('performed_by')
-            ->nullable()
-            ->constrained('doctors')
-            ->nullOnDelete();
+            $table->foreignId('performed_by')
+                ->nullable()
+                ->constrained('doctors')
+                ->nullOnDelete();
 
-        $table->enum('file_type', [
-            'Lab',
-            'Radiology'
-        ]);
-        
-        $table->string('file_url')
-            ->nullable();
+            $table->enum('file_type', [
+                'Lab',
+                'Radiology'
+            ]);
 
-        $table->text('result')
-            ->nullable();
+            $table->string('file_url')
+                ->nullable();
 
-       $table->enum('status', [
-        'pending',
-        'done'
-        ])->default('pending');
+            $table->text('result')
+                ->nullable();
 
-     $table->timestamps();
-        }); 
-       
-       
+            $table->enum('status', [
+                'pending',
+                'done'
+            ])->default('pending');
+
+            $table->timestamps();
+        });
     }
 
     /**

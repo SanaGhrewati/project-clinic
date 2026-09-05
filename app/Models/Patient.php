@@ -11,7 +11,7 @@ class Patient extends Model
         'mobile',
         'gender',
         'birthdate',
-        'address'
+        'address',
     ];
 
     public function user()

@@ -17,7 +17,6 @@ class AdminController extends Controller
     public function stats()
     {
         return response()->json([
-
             'totalDoctors' => Doctor::count(),
 
             'generalDoctors' => Doctor::where('doctor_type', 'General')->count(),
@@ -39,10 +38,8 @@ class AdminController extends Controller
             'pendingRadiology' => MedicalFile::where('file_type', 'Radiology')
                 ->where('status', 'pending')
                 ->count(),
-
         ]);
     }
-
 
     public function index()
     {
@@ -125,13 +122,10 @@ class AdminController extends Controller
         $user = User::findOrFail($doctor->user_id);
 
         $doctor->delete();
-
         $user->delete();
 
         return response()->json([
             'message' => 'تم حذف الطبيب بنجاح'
         ]);
     }
-
 }
-

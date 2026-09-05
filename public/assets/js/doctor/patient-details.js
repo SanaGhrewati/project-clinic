@@ -116,6 +116,29 @@ if (patientDetailsUser) {
     `;
     }
 
+    // القيمة الحقيقية لملف مرفوع تبدأ دائمًا بـ storage/ (كما يخزّنها StaffController::update)
+    // أو تكون رابطًا كاملًا. قبل رفع أي ملف يحمل هذا الحقل نص "نوع التحليل" الذي اختاره
+    // الطبيب عند إنشاء الطلب (حسب MedicalFileController::store)، وليس رابط ملف — لذلك
+    // يجب التفريق بينهما قبل عرضه كرابط.
+    function isUploadedFile(url) {
+        return (
+            !!url && (/^https?:\/\//i.test(url) || url.startsWith("storage/"))
+        );
+    }
+
+    function resolveFileUrl(path) {
+        if (/^https?:\/\//i.test(path)) return path;
+        const root = API_URL.replace(/\/api\/?$/, "");
+        return `${root}/${String(path).replace(/^\/+/, "")}`;
+    }
+
+    function fileLinkCell(file) {
+        if (isUploadedFile(file.file_url)) {
+            return `<a href="${resolveFileUrl(file.file_url)}" target="_blank" rel="noopener noreferrer">عرض / تحميل الملف</a>`;
+        }
+        return `<span class="text-muted">لا يوجد ملف مرفوع بعد</span>`;
+    }
+
     function renderMedicalHistory(
         labs,
         radiology,
@@ -123,19 +146,19 @@ if (patientDetailsUser) {
         appointments,
     ) {
         document.getElementById("labsTab").innerHTML = makeHistoryTable(
-            ["نوع التحليل", "النتيجة", "الحالة", "التاريخ"],
+            ["نوع التحليل", "النتيجة", "الحالة", "الملف", "التاريخ"],
             labs.map(
                 (file) => `
-        <tr><td>${file.file_type ?? "-"}</td><td>${file.result ?? "-"}</td><td>${badge(file.status)}</td><td>${file.created_at}</td></tr>
+        <tr><td>${file.file_type ?? "-"}</td><td>${file.result ?? "-"}</td><td>${badge(file.status)}</td><td>${fileLinkCell(file)}</td><td>${file.created_at}</td></tr>
       `,
             ),
         );
 
         document.getElementById("radiologyTab").innerHTML = makeHistoryTable(
-            ["نوع الأشعة", "التقرير", "الحالة", "التاريخ"],
+            ["نوع الأشعة", "التقرير", "الحالة", "الملف", "التاريخ"],
             radiology.map(
                 (file) => `
-        <tr><td>${file.file_type ?? "-"}</td><td>${file.result ?? "-"}</td><td>${badge(file.status)}</td><td>${file.created_at}</td></tr>
+        <tr><td>${file.file_type ?? "-"}</td><td>${file.result ?? "-"}</td><td>${badge(file.status)}</td><td>${fileLinkCell(file)}</td><td>${file.created_at}</td></tr>
       `,
             ),
         );
